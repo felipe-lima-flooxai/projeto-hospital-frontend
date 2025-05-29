@@ -22,7 +22,7 @@ export default function RootLayout({
                 <Nav.Link href="/about" className='text-white'>Sobre</Nav.Link>
                 <Nav.Link href="/contact" className='text-white'>Contato</Nav.Link>
                 <Nav.Link href="/leaderboard" className='text-white'>Leaderboard</Nav.Link>
-                <Nav.Link href="/login" className='text-white'>Login</Nav.Link>
+                <Nav.Link href="/auth/login" className='text-white'>Login</Nav.Link>
                 <Nav.Link href="/signup" className='text-white'>Cadastro</Nav.Link>
               </Nav>
             </Navbar.Collapse>
