@@ -1,17 +1,17 @@
 'use client'
 
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+//mesma coisa do login, muda mt não
 
 export default function LoginPage() {
   return (
-    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '100vh' }}>
+    <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
       <Row>
         <Col>
           <Card className="p-4 shadow" style={{ width: '20rem' }}>
             <Card.Body>
               <Card.Title className="mb-3 text-center">Login</Card.Title>
 
-              {/* Formulário de login */}
               <Form>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email</Form.Label>
@@ -30,7 +30,6 @@ export default function LoginPage() {
                 </div>
               </Form>
 
-              {/* Botão de cadastro */}
               <div className="text-center">
                 <Button variant="link" href="/auth/register">
                   Não tem conta? Cadastre-se

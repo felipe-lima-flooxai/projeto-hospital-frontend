@@ -2,6 +2,7 @@
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Container, Nav } from 'react-bootstrap';
+//layoutzinho básico usando vários componentes prontos de bootstrap
 
 export default function RootLayout({
   children,
@@ -23,7 +24,7 @@ export default function RootLayout({
                 <Nav.Link href="/contact" className='text-white'>Contato</Nav.Link>
                 <Nav.Link href="/leaderboard" className='text-white'>Leaderboard</Nav.Link>
                 <Nav.Link href="/auth/login" className='text-white'>Login</Nav.Link>
-                <Nav.Link href="/signup" className='text-white'>Cadastro</Nav.Link>
+                <Nav.Link href="/auth/signup" className='text-white'>Cadastro</Nav.Link>
               </Nav>
             </Navbar.Collapse>
           </Container>

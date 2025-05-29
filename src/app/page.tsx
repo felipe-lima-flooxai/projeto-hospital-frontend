@@ -40,7 +40,7 @@ export default function LandingPage() {
           <Button variant="primary" href="/auth/login">
             Login
           </Button>
-          <Button variant="success" href="/auth/register">
+          <Button variant="success" href="/auth/signup">
             Registro
           </Button>
         </Col>
