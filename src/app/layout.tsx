@@ -20,8 +20,7 @@ export default function RootLayout({
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="ms-auto" >
                 <Nav.Link href="/" className='text-white'>Home</Nav.Link>
-                <Nav.Link href="/about" className='text-white'>Sobre</Nav.Link>
-                <Nav.Link href="/contact" className='text-white'>Contato</Nav.Link>
+                <Nav.Link href="/vagas" className='text-white'>Vagas</Nav.Link>
                 <Nav.Link href="/leaderboard" className='text-white'>Leaderboard</Nav.Link>
                 <Nav.Link href="/auth/login" className='text-white'>Login</Nav.Link>
                 <Nav.Link href="/auth/signup" className='text-white'>Cadastro</Nav.Link>

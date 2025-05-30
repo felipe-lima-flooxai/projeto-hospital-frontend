@@ -1,9 +1,47 @@
 'use client'
-
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 //mesma coisa do login, muda mt não
 
 export default function LoginPage() {
+    const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const router = useRouter();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    try {
+      const response = await fetch('http://localhost:3001/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        setError('Email ou senha incorretos!');
+        return;
+        }
+   
+      const { token, user } = await response.json();
+      const {id, username, isAdmin} = user
+      console.log(response.status)
+
+      localStorage.setItem('token', token);
+      localStorage.setItem('user', id);
+      localStorage.setItem("username", username)
+      localStorage.setItem("isAdmin", isAdmin)
+
+      router.push('/vagas');
+
+    } catch (err) {
+        //to setando mas ainda nao to fazendo nada com isso
+      setError('Algo inesperado aconteceu. Tente novamente mais tarde.');
+    }
+  };
+
   return (
     <Container className="d-flex justify-content-center align-items-center" style={{ minHeight: '80vh' }}>
       <Row>
@@ -12,15 +50,15 @@ export default function LoginPage() {
             <Card.Body>
               <Card.Title className="mb-3 text-center">Login</Card.Title>
 
-              <Form>
+              <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">
                   <Form.Label>Email</Form.Label>
-                  <Form.Control type="email" placeholder="Digite seu email" />
+                  <Form.Control type="email" placeholder="Digite seu email" value={email} onChange={(e)=> setEmail(e.target.value)}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formBasicPassword">
                   <Form.Label>Senha</Form.Label>
-                  <Form.Control type="password" placeholder="Digite sua senha" />
+                  <Form.Control type="password" placeholder="Digite sua senha" value={password} onChange={(e)=> setPassword(e.target.value)}/>
                 </Form.Group>
 
                 <div className="d-grid mb-3">
