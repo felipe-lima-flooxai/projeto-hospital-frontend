@@ -2,17 +2,20 @@
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import {setCookie} from "cookies-next"
+import { useAuth } from '@/context/AuthContext';
 //cansei de botar dentro do jsx, vou falar aqui msm
 //Componentes interessantes usados:
 //Container/row/col, Card, Form/formGroup e Button
 
 export default function RegisterPage() {
-    const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+    const [username, setName] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const { setAuthData } = useAuth();
 
   const router = useRouter();
 
@@ -27,10 +30,10 @@ export default function RegisterPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:3001/auth/register', {
+      const response = await fetch('http://localhost:3001/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ username, email, password }),
       });
 
       if (!response.ok) {
@@ -39,8 +42,16 @@ export default function RegisterPage() {
       }
 
       setSuccess('Cadastro realizado com sucesso!');
+
+      const { token, user } = await response.json();
+      setAuthData(token, user);
+      
+      setCookie('token', `Bearer ${token}`, {
+        path: '/',        
+        maxAge: (60 * 60 * 24)/3, // 8 horas igual o do backend. Daí ele apaga automaticamente.
+      });
     
-        router.push('/vagas');
+      router.push('/vagas');
 
     } catch (err) {
       console.error(err);
@@ -59,7 +70,7 @@ export default function RegisterPage() {
               <Form onSubmit={handleRegister}>
                 <Form.Group className="mb-3" controlId="formName">
                   <Form.Label>Nome</Form.Label>
-                  <Form.Control type="text" placeholder="Digite seu nome" value={name} onChange={(e)=> setName(e.target.value)}/>
+                  <Form.Control type="text" placeholder="Digite seu nome" value={username} onChange={(e)=> setName(e.target.value)}/>
                 </Form.Group>
 
                 <Form.Group className="mb-3" controlId="formEmail">
