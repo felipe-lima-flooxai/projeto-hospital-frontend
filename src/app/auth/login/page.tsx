@@ -1,14 +1,17 @@
 'use client'
-import { useState } from 'react';
+import { useAuth } from "@/context/AuthContext";
+import {useState} from "react";
+import {setCookie} from "cookies-next"
 import { useRouter } from 'next/navigation';
 import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
 //mesma coisa do login, muda mt não
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const router = useRouter();
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const router = useRouter();
+    const { setAuthData } = useAuth();
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,13 +29,12 @@ export default function LoginPage() {
         }
    
       const { token, user } = await response.json();
-      const {id, username, isAdmin} = user
-      console.log(response.status)
+      setAuthData(token, user);
 
-      localStorage.setItem('token', token);
-      localStorage.setItem('user', id);
-      localStorage.setItem("username", username)
-      localStorage.setItem("isAdmin", isAdmin)
+      setCookie('token', `Bearer ${token}`, {
+        path: '/',        
+        maxAge: (60 * 60 * 24)/3, // 8 horas igual o do backend. Daí ele apaga automaticamente.
+      });
 
       router.push('/vagas');
 
