@@ -31,7 +31,7 @@ export default function LoginPage() {
       const { token, user } = await response.json();
       setAuthData(token, user);
 
-      setCookie('token', `Bearer ${token}`, {
+      setCookie('token', `${token}`, {
         path: '/',        
         maxAge: (60 * 60 * 24)/3, // 8 horas igual o do backend. Daí ele apaga automaticamente.
       });
