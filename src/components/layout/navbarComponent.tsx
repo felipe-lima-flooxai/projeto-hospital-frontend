@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { Navbar, Container, Nav } from 'react-bootstrap'
+import { Navbar, Container, Nav, NavDropdown } from 'react-bootstrap'
 import { useAuth } from '@/context/AuthContext'
 
 export default function NavbarComponent() {
@@ -15,18 +15,19 @@ export default function NavbarComponent() {
               <Navbar.Collapse id="basic-navbar-nav">
                 <Nav className="ms-auto" >
                   <Nav.Link as={Link} href="/" className='text-white'>Home</Nav.Link>
-                  <Nav.Link as={Link} href="/vagas" className='text-white'>Vagas</Nav.Link>
+                  
                   <Nav.Link as={Link} href="/leaderboard" className='text-white'>Leaderboard</Nav.Link>
 
                   {!user && (
                     <>
+                        <Nav.Link as={Link} href="/vagas" className='text-white'>Vagas</Nav.Link>
                         <Nav.Link as={Link} href="/auth/login" className="text-white">Login</Nav.Link>
                         <Nav.Link as={Link} href="/auth/signup" className="text-white">Cadastro</Nav.Link>
                     </>
                     )}
 
                     {user && (
-                    <>
+                    <>  <Nav.Link as={Link} href="/vagas" className='text-white'>Vagas</Nav.Link>
                         <Nav.Link as={Link} href="/candidaturas" className="text-white">Candidaturas</Nav.Link>
                         <Nav.Link as={Link} href="/profile" className="text-white">Perfil</Nav.Link>
                         <Nav.Link as={Link} href='/auth/login' onClick={clearAuthData} className="btn btn-link text-white text-decoration-none">Logout</Nav.Link>
@@ -35,12 +36,8 @@ export default function NavbarComponent() {
 
                     {user?.isAdmin && (
                     <>
-                        <Nav.Link as={Link} href="/criar-vagas" className="text-white">
-                        Criar Vagas
-                        </Nav.Link>
-                        <Nav.Link as={Link} href="/users" className="text-white">
-                        Visualizar Usuários
-                        </Nav.Link>
+                        <Nav.Link as={Link} href="/users" className="text-white">Usuários</Nav.Link>
+                        <Nav.Link as={Link} href="/auth/signup/admin" className="text-white">Cadastrar Admin</Nav.Link>
                     </>
                     )}
                 </Nav>

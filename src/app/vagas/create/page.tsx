@@ -1,5 +1,6 @@
 "use client"
-export default function showAllUsers(){
+
+export default function showCreateVagas(){
     return (
         <span>Em construção</span>
     )

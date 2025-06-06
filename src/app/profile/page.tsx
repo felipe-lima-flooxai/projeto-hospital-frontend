@@ -72,8 +72,7 @@ export default function EditarPerfilPage() {
     }
   }
 
-  return (
-    <Container>
+  return user ? (<Container>
       <h1 className="my-4">Editar Perfil</h1>
 
       {/*Renderização condicional de mensagens de erro e sucesso */}
@@ -206,6 +205,7 @@ export default function EditarPerfilPage() {
           Salvar Alterações
         </Button>
       </Form>
-    </Container>
-  )
+    </Container>): null 
+    
+  
 }

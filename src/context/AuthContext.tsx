@@ -1,5 +1,7 @@
 'use client'
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { deleteCookie, getCookie, setCookie } from 'cookies-next';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 //vamos lá, preciso comentar pra eu mesmo me organizar
 //esses assuntos ainda não tão 100% na minha mente
 
@@ -37,18 +39,49 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [token, setToken] = useState<string | null>(null);
+  const token =  getCookie('token') as string
   const [user, setUser] = useState<User | null>(null);
+  const router = useRouter()
 
   const setAuthData = (token: string, user: User) => {
-    setToken(token);
+    setCookie("token", token)
     setUser(user);
   };
 
   const clearAuthData = () => {
-    setToken(null);
+    router.push("/")
+    deleteCookie("token")
     setUser(null);
   };
+
+  const getCurrentUser = async () => {
+    try {
+      
+      const res = await fetch('http://localhost:3001/auth/me', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: ` ${token}`
+        }
+      });
+
+      const userData = await res.json();
+      setUser(userData);
+    } catch (err) {
+      console.log('Usuário não autenticado ou erro no /me');
+      setUser(null);
+    }
+  }
+
+  useEffect(()=>{
+    console.log("Token ", token)
+    console.log("User ", user)
+    if(token && !user){
+         getCurrentUser()
+    }
+ 
+  },
+   [user, token])
 
   return (
     <AuthContext.Provider value={{ token, user, setAuthData, clearAuthData }}>

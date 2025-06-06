@@ -1,5 +1,6 @@
 'use client';
-
+import { useAuth } from '@/context/AuthContext';
+import { getCookie } from 'cookies-next';
 import { useEffect, useState } from 'react';
 import { Card, Container, Row, Col, Button, ButtonGroup, Pagination, Spinner, Alert } from 'react-bootstrap';
 
@@ -19,11 +20,46 @@ export default function VagasPage() {
   const [limit, setLimit] = useState<number>(5)
   const [typeFilter, setTypeFilter] = useState<string | null>(null);
   const [minRewardFilter, setMinRewardFilter] = useState<number | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [errorMessage, setError] = useState<string | null>(null);
+  const [successMessage, setSuccess] = useState<string | null>(null)
+
+  const {user} = useAuth()
+  const token = getCookie("token") as string
+
+  const handleCandidatar = async (vagaID: string) => {
+    if(!token) {
+      setError("Não há usuário logado")
+      return
+    }
+
+  try {
+    const response = await fetch('http://localhost:3001/candidatura', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token || '',
+      },
+      body: JSON.stringify({ vagaID }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setError(data.error || 'Erro ao se candidatar');
+      return;
+    }
+
+    setSuccess('Candidatura realizada com sucesso!');
+  } catch (error) {
+    setError('Erro na requisição');
+    console.error(error);
+  }
+};
 
   useEffect(() => {
     const fetchVagas = async () => {
       setError(null);
+      setSuccess(null)
 
       const params = new URLSearchParams();
       params.append('page', page.toString());
@@ -66,6 +102,9 @@ export default function VagasPage() {
 
   return (
     <Container className="mt-4">
+      {/*Renderização condicional de mensagens de erro e sucesso */}
+      {successMessage && <Alert variant="success">{successMessage}</Alert>}
+      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
       <h2 className="mb-4">Vagas Disponíveis</h2>
 
       <ButtonGroup className="mb-3">
@@ -96,6 +135,9 @@ export default function VagasPage() {
                 <Card.Text>{vaga.description}</Card.Text>
                 <Card.Text><strong>Pontos:</strong> {vaga.rewardPoints}</Card.Text>
                 <Card.Text><strong>Data:</strong> {new Date(vaga.taskDate).toLocaleDateString('pt-BR')}</Card.Text>
+                {user && (
+                  <Button variant="success" className="mt-2" onClick={() => handleCandidatar(vaga.id)}> Se candidatar </Button>
+                )}
               </Card.Body>
             </Card>
           </Col>
