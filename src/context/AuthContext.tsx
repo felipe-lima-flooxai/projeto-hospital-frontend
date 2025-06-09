@@ -57,7 +57,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const getCurrentUser = async () => {
     try {
       
-      const res = await fetch('http://localhost:3001/auth/me', {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

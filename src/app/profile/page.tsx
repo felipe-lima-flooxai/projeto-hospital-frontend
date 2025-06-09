@@ -47,7 +47,7 @@ export default function EditarPerfilPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      const res = await fetch(`http://localhost:3001/users/${user?.id}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/${user?.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -24,7 +24,7 @@ export default function showLeaderboard(){
             params.append("limit", limit.toString())
 
             try {
-                const response  = await fetch(`http://localhost:3001/leaderboard?${params.toString()}`)
+                const response  = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/leaderboard?${params.toString()}`)
 
                 if(!response.ok) throw new Error("Erro ao buscar ranking")
 

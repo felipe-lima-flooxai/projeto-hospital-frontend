@@ -69,7 +69,7 @@ export default function VagasPage() {
       if (minRewardFilter) params.append('minRewardPoints', minRewardFilter.toString());
 
       try {
-        const response = await fetch(`http://localhost:3001/vagas?${params.toString()}`);
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vagas?${params.toString()}`);
         if (!response.ok) throw new Error('Erro ao buscar vagas');
 
         const data = await response.json();
