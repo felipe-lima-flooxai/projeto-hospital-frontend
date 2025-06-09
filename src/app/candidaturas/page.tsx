@@ -34,7 +34,7 @@ export default function MinhasCandidaturasPage() {
 
     const fetchCandidaturas = async () => {
       try {
-        const res = await fetch('http://localhost:3001/candidatura', {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidatura`, {
           headers: {
             Authorization: ` ${token}`,
           },
