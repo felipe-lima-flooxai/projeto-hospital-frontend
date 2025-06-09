@@ -1,83 +1,106 @@
-"use client"
-
 'use client';
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Button, Card, Container, Row, Col, Alert } from 'react-bootstrap';
+import { useRouter } from 'next/navigation';
+import { Container, Row, Col, Card, Alert, Spinner, Button } from 'react-bootstrap';
 
-export default function CandidaturaPage() {
+interface Vaga {
+  id: string;
+  title: string;
+  type: string;
+  description: string;
+  status: string;
+}
+
+interface Candidatura {
+  id: string;
+  status: string;
+  vaga: Vaga;
+}
+
+export default function MinhasCandidaturasPage() {
   const { user, token } = useAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const [vaga, setVaga] = useState<any>(null);
+  const [candidaturas, setCandidaturas] = useState<Candidatura[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-
-  const vagaId = searchParams.get('vagaId'); // ?vagaId=123
 
   useEffect(() => {
-    if (!user) {
+    if (!user || !token) {
       router.push('/auth/login');
+      return;
     }
-  }, [user, router]);
 
-  useEffect(() => {
-    if (vagaId) {
-      fetch(`http://localhost:3001/vagas/${vagaId}`)
-        .then((res) => res.json())
-        .then((data) => setVaga(data))
-        .catch(() => setError('Erro ao buscar vaga.'));
-    }
-  }, [vagaId]);
+    const fetchCandidaturas = async () => {
+      try {
+        const res = await fetch('http://localhost:3001/candidatura', {
+          headers: {
+            Authorization: ` ${token}`,
+          },
+        });
 
-  const handleCandidatura = async () => {
+        if (!res.ok) throw new Error('Erro ao buscar candidaturas.');
+
+        const data = await res.json();
+        setCandidaturas(data);
+      } catch (err) {
+        setError('Erro ao carregar suas candidaturas.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCandidaturas();
+  }, [user, token, router]);
+
+  const handleCancelar = async (id: string) => {
     try {
-      const res = await fetch('http://localhost:3001/candidaturas', {
-        method: 'POST',
+      const res = await fetch(`http://localhost:3001/candidatura/${id}`, {
+        method: "DELETE",
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: ` ${token}`,
+          Authorization: `${token}`,
         },
-        body: JSON.stringify({ vagaId }),
       });
 
-      if (!res.ok) throw new Error('Erro na candidatura.');
+      if (!res.ok) throw new Error("Erro ao cancelar candidatura");
 
-      setSuccess('Candidatura realizada com sucesso!');
+      // Remove a candidatura da lista
+      setCandidaturas((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
-      setError('Erro ao se candidatar.');
+      console.error(err);
     }
   };
 
+  if (loading) {
+    return (
+      <Container className="text-center mt-5">
+        <Spinner animation="border" />
+      </Container>
+    );
+  }
+
   return (
-    <Container className="mt-5">
-      <Row className="justify-content-center">
-        <Col md={8}>
-          <Card>
-            <Card.Body>
-              <Card.Title>Detalhes da Vaga</Card.Title>
+    <Container className="mt-4">
+      <h3>Minhas Candidaturas</h3>
+      {error && <Alert variant="danger">{error}</Alert>}
+      {candidaturas.length === 0 && <p>Você ainda não se candidatou a nenhuma vaga.</p>}
 
-              {vaga ? (
-                <>
-                  <p><strong>Título:</strong> {vaga.titulo}</p>
-                  <p><strong>Descrição:</strong> {vaga.descricao}</p>
-                  <p><strong>Empresa:</strong> {vaga.empresa}</p>
-
-                  {success && <Alert variant="success">{success}</Alert>}
-                  {error && <Alert variant="danger">{error}</Alert>}
-
-                  <Button variant="primary" onClick={handleCandidatura}>
-                    Candidatar-se
-                  </Button>
-                </>
-              ) : (
-                <p>Carregando vaga...</p>
-              )}
-            </Card.Body>
-          </Card>
-        </Col>
+      <Row>
+        {candidaturas.map((candidatura) => (
+          <Col key={candidatura.id} md={6} lg={4} className="mb-4">
+            <Card>
+              <Card.Body>
+                <Card.Title>{candidatura.vaga.title}</Card.Title>
+                <Card.Subtitle className="mb-2 text-muted">Tipo: {candidatura.vaga.type}</Card.Subtitle>
+                <Card.Text>{candidatura.vaga.description}</Card.Text>
+                <p>Status da vaga: <strong>{candidatura.vaga.status}</strong></p>
+                <p>Status da candidatura: <strong>{candidatura.status}</strong></p>
+                <Button variant="danger" size="sm" onClick={() => handleCancelar(candidatura.id)}>Cancelar candidatura</Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        ))}
       </Row>
     </Container>
   );

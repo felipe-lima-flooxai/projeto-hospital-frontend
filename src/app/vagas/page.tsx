@@ -136,7 +136,7 @@ export default function VagasPage() {
                 <Card.Text><strong>Pontos:</strong> {vaga.rewardPoints}</Card.Text>
                 <Card.Text><strong>Data:</strong> {new Date(vaga.taskDate).toLocaleDateString('pt-BR')}</Card.Text>
                 {user && (
-                  <Button variant="success" className="mt-2" onClick={() => handleCandidatar(vaga.id)}> Se candidatar </Button>
+                  <Button variant="success" className="mt-2" onClick={() => handleCandidatar(vaga.id)}> Candidatar-se </Button>
                 )}
               </Card.Body>
             </Card>
