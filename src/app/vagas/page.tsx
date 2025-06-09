@@ -33,7 +33,7 @@ export default function VagasPage() {
     }
 
   try {
-    const response = await fetch('http://localhost:3001/candidatura', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidatura`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
