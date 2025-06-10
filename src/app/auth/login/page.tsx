@@ -71,7 +71,7 @@ export default function LoginPage() {
               </Form>
 
               <div className="text-center">
-                <Button variant="link" href="/auth/register">
+                <Button variant="link" onClick={() => router.push("/auth/signup")}>
                   Não tem conta? Cadastre-se
                 </Button>
               </div>
