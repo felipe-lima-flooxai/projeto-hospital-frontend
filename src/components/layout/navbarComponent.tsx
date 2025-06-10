@@ -26,8 +26,10 @@ export default function NavbarComponent() {
                     </>
                     )}
 
-                    {user && (
-                    <>  <Nav.Link as={Link} href="/vagas" className='text-white'>Vagas</Nav.Link>
+                    {user && !user?.isAdmin && (
+                    <>  
+                        
+                        <Nav.Link as={Link} href="/vagas" className='text-white'>Vagas</Nav.Link>
                         <Nav.Link as={Link} href="/candidaturas" className="text-white">Candidaturas</Nav.Link>
                         <Nav.Link as={Link} href="/profile" className="text-white">Perfil</Nav.Link>
                         <Nav.Link as={Link} href='/auth/login' onClick={clearAuthData} className="btn btn-link text-white text-decoration-none">Logout</Nav.Link>
@@ -36,8 +38,16 @@ export default function NavbarComponent() {
 
                     {user?.isAdmin && (
                     <>
+                        <NavDropdown title="Vagas">
+                          <NavDropdown.Item as={Link} href="/vagas"> Listar Vagas </NavDropdown.Item>
+                          <NavDropdown.Item as={Link} href="/vagas/create"> Criar vaga </NavDropdown.Item>
+                          <NavDropdown.Item as={Link} href="/vagas/closed"> Vagas Fechadas </NavDropdown.Item>
+                        </NavDropdown>
+                        <Nav.Link as={Link} href="/candidaturas/admin-candidaturas" className="text-white">Candidaturas</Nav.Link>
                         <Nav.Link as={Link} href="/users" className="text-white">Usuários</Nav.Link>
                         <Nav.Link as={Link} href="/auth/signup/admin" className="text-white">Cadastrar Admin</Nav.Link>
+                        <Nav.Link as={Link} href="/profile" className="text-white">Perfil</Nav.Link>
+                        <Nav.Link as={Link} href='/auth/login' onClick={clearAuthData} className="btn btn-link text-white text-decoration-none">Logout</Nav.Link>
                     </>
                     )}
                 </Nav>

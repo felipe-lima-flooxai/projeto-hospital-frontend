@@ -56,6 +56,34 @@ export default function VagasPage() {
   }
 };
 
+  const handleDelete = async (vagaID: string) => {
+    if (!token) {
+      setError("Você precisa estar logado");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vagas/${vagaID}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: token,
+        },
+      });
+
+      if (!response.ok) {
+        const data = await response.json();
+        setError(data.error || "Erro ao deletar vaga");
+        return;
+      }
+
+      setSuccess("Vaga deletada com sucesso");
+      setVagas(vagas.filter(vaga => vaga.id !== vagaID));
+    } catch (err) {
+      console.error(err);
+      setError("Erro na requisição ao deletar vaga");
+    }
+  };
+
   useEffect(() => {
     const fetchVagas = async () => {
       setError(null);
@@ -137,6 +165,9 @@ export default function VagasPage() {
                 <Card.Text><strong>Data:</strong> {new Date(vaga.taskDate).toLocaleDateString('pt-BR')}</Card.Text>
                 {user && (
                   <Button variant="success" className="mt-2" onClick={() => handleCandidatar(vaga.id)}> Candidatar-se </Button>
+                )}
+                {user?.isAdmin && (
+                  <Button variant="danger" className="mt-2 ms-2" onClick={() => handleDelete(vaga.id)}>Deletar</Button>
                 )}
               </Card.Body>
             </Card>
