@@ -73,8 +73,8 @@ export default function CreateAdminPage() {
         <Container className="mt-4" style={{ maxWidth: "600px" }}>
             <h2>Cadastrar Novo Administrador</h2>
 
-            {error && <Alert variant="danger">{error}</Alert>}
-            {success && <Alert variant="success">{success}</Alert>}
+            {error && <Alert variant="danger" dismissible onClose={()=> setError(null)}>{error}</Alert>}
+            {success && <Alert variant="success" dismissible onClose={()=> setSuccess(null)}>{success}</Alert>}
 
             <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">

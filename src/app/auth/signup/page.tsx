@@ -1,7 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import {setCookie} from "cookies-next"
 import { useAuth } from '@/context/AuthContext';
 //cansei de botar dentro do jsx, vou falar aqui msm
@@ -13,8 +13,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const { setAuthData } = useAuth();
 
   const router = useRouter();
@@ -66,10 +66,11 @@ export default function RegisterPage() {
           <Card className="p-4 shadow" style={{ width: '20rem' }}>
             <Card.Body>
               <Card.Title className="mb-3 text-center">Cadastro</Card.Title>
-
+              {error && <Alert variant="danger" dismissible onClose={()=> setError(null)}>{error}</Alert>}
+              {success && <Alert variant="success" dismissible onClose={()=> setSuccess(null)}>{success}</Alert>}
               <Form onSubmit={handleRegister}>
                 <Form.Group className="mb-3" controlId="formName">
-                  <Form.Label>Nome</Form.Label>
+                  <Form.Label>Username</Form.Label>
                   <Form.Control type="text" placeholder="Digite seu nome" value={username} onChange={(e)=> setName(e.target.value)}/>
                 </Form.Group>
 

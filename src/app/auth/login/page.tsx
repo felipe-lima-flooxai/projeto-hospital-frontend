@@ -3,13 +3,13 @@ import { useAuth } from "@/context/AuthContext";
 import {useState} from "react";
 import {setCookie} from "cookies-next"
 import { useRouter } from 'next/navigation';
-import { Container, Row, Col, Card, Form, Button } from 'react-bootstrap';
+import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 //mesma coisa do login, muda mt não
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [error, setError] = useState('');
+    const [error, setError] = useState<string | null>(null);
     const router = useRouter();
     const { setAuthData } = useAuth();
 
@@ -51,6 +51,7 @@ export default function LoginPage() {
           <Card className="p-4 shadow" style={{ width: '20rem' }}>
             <Card.Body>
               <Card.Title className="mb-3 text-center">Login</Card.Title>
+              {error && <Alert variant="danger" dismissible onClose={()=> setError(null)}>{error}</Alert>}
 
               <Form onSubmit={handleLogin}>
                 <Form.Group className="mb-3" controlId="formBasicEmail">

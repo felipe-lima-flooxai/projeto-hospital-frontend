@@ -34,8 +34,8 @@ export default function EditarPerfilPage() {
   birthDate: formData.birthDate ? new Date(formData.birthDate).toISOString() : null
 }
 
-  const [successMessage, setSuccessMessage] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   //função pra fazer 1 handle em vez de 8 handles dos itens dos formulários
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,8 +76,8 @@ export default function EditarPerfilPage() {
       <h1 className="my-4">Editar Perfil</h1>
 
       {/*Renderização condicional de mensagens de erro e sucesso */}
-      {successMessage && <Alert variant="success">{successMessage}</Alert>}
-      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+      {successMessage && <Alert variant="success" dismissible onClose={()=>setSuccessMessage(null)}>{successMessage}</Alert>}
+      {errorMessage && <Alert variant="danger" dismissible onClose={()=>setErrorMessage(null)}>{errorMessage}</Alert>}
 
       <Form onSubmit={handleSubmit}>
         <Row>

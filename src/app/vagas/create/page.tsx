@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCookie } from 'cookies-next';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
@@ -16,10 +16,22 @@ export default function CreateVagaPage() {
   const router = useRouter();
   const token = getCookie("token") as string;
 
+  useEffect(() => {
+        if (success) {
+            const timer = setTimeout(() => setSuccess(null), 1500); 
+            return () => clearTimeout(timer);
+        }
+        if(error){
+          const timer = setTimeout(()=>setError(null), 1500);
+          return () => clearTimeout(timer)
+        }
+        }, [success, error]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSuccess(null);
+
 
     if (!token) {
       setError("Você precisa estar logado para criar uma vaga.");
@@ -51,12 +63,14 @@ export default function CreateVagaPage() {
     }
   };
 
+
+
   return (
     <Container className="mt-5">
       <h2 className="mb-4">Criar Nova Vaga</h2>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      {error && <Alert variant="danger" dismissible onClose={()=>setError(null)}>{error}</Alert>}
+      {success && <Alert variant="success" dismissible onClose={()=>setSuccess(null)}>{success}</Alert>}
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">

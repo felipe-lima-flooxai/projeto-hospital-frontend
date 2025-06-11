@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Container, ButtonGroup, Button, Row, Col, Card, ListGroup, Badge, Pagination } from "react-bootstrap"
 
 interface usuarioLeaderboard {
-    fullname: string
+    username: string
     totalPoints: number
     createdAt: Date
 }
@@ -77,7 +77,7 @@ export default function showLeaderboard(){
                         </div>
 
                         <div className="text-truncate">
-                        <strong>{user.fullname || 'Nome não informado'}</strong>
+                        <strong>{user.username || 'Username não informado'}</strong>
                         </div>
 
                         <div>

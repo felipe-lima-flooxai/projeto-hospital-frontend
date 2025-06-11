@@ -78,6 +78,17 @@ export default function VagasFechadasPage() {
     }
   }, [page, typeFilter, minRewardFilter, limit, user]);
 
+  useEffect(() => {
+    if (successMessage) {
+        const timer = setTimeout(() => setSuccess(null), 4000); 
+        return () => clearTimeout(timer);
+    }
+    if(errorMessage){
+      const timer = setTimeout(()=>setError(null), 4000);
+      return () => clearTimeout(timer)
+    }
+    }, [successMessage, errorMessage]);
+
   const handleDeleteVaga = async (vagaId: string) => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/vagas/${vagaId}`, {

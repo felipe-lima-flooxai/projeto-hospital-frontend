@@ -43,7 +43,10 @@ export default function NavbarComponent() {
                           <NavDropdown.Item as={Link} href="/vagas/create"> Criar vaga </NavDropdown.Item>
                           <NavDropdown.Item as={Link} href="/vagas/closed"> Vagas Fechadas </NavDropdown.Item>
                         </NavDropdown>
-                        <Nav.Link as={Link} href="/candidaturas/admin-candidaturas" className="text-white">Candidaturas</Nav.Link>
+                        <NavDropdown title="Candidaturas">
+                          <NavDropdown.Item as={Link} href="/candidaturas/admin-candidaturas"> Todas Candidaturas </NavDropdown.Item>
+                          <NavDropdown.Item as={Link} href="/candidaturas"> Minhas Candidaturas </NavDropdown.Item>
+                        </NavDropdown>
                         <Nav.Link as={Link} href="/users" className="text-white">Usuários</Nav.Link>
                         <Nav.Link as={Link} href="/auth/signup/admin" className="text-white">Cadastrar Admin</Nav.Link>
                         <Nav.Link as={Link} href="/profile" className="text-white">Perfil</Nav.Link>

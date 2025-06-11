@@ -13,8 +13,19 @@ interface Vaga {
   taskDate: string;
 }
 
+interface Candidatura {
+  id: string;
+  vagaID: string;
+  status: string;
+  vaga: {
+    id: string;
+    title: string;
+  };
+}
+
 export default function VagasPage() {
   const [vagas, setVagas] = useState<Vaga[]>([]);
+  const [minhasCandidaturas, setMinhasCandidaturas] = useState<Candidatura[]>([])
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
   const [limit, setLimit] = useState<number>(5)
@@ -22,9 +33,33 @@ export default function VagasPage() {
   const [minRewardFilter, setMinRewardFilter] = useState<number | null>(null);
   const [errorMessage, setError] = useState<string | null>(null);
   const [successMessage, setSuccess] = useState<string | null>(null)
+  
 
   const {user} = useAuth()
   const token = getCookie("token") as string
+
+  const fetchMinhasCandidaturas = async () => {
+    if (!user) return;
+    
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/candidatura`, {
+        headers: {
+          Authorization: token
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setMinhasCandidaturas(data);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar candidaturas:", error);
+    }
+  };
+
+  const jaCandidatado = (vagaId: string) => {
+  return minhasCandidaturas.some(c => c.vagaID === vagaId);
+  };
 
   const handleCandidatar = async (vagaID: string) => {
     if(!token) {
@@ -48,6 +83,8 @@ export default function VagasPage() {
       setError(data.error || 'Erro ao se candidatar');
       return;
     }
+
+    setMinhasCandidaturas(prev => [...prev, data]);
 
     setSuccess('Candidatura realizada com sucesso!');
   } catch (error) {
@@ -84,8 +121,7 @@ export default function VagasPage() {
     }
   };
 
-  useEffect(() => {
-    const fetchVagas = async () => {
+  const fetchVagas = async () => {
       setError(null);
       setSuccess(null)
 
@@ -108,8 +144,27 @@ export default function VagasPage() {
       } 
     };
 
-    fetchVagas();
-  }, [page, typeFilter, minRewardFilter, limit]);
+  useEffect(() => {
+    const loadData = async () => {
+    await fetchVagas();
+    await fetchMinhasCandidaturas();
+    };
+  
+    loadData();
+  }, [page, typeFilter, minRewardFilter, limit, user]);
+
+
+
+  useEffect(() => {
+    if (successMessage) {
+        const timer = setTimeout(() => setSuccess(null), 4000); // Fecha após 5s
+        return () => clearTimeout(timer);
+    }
+    if(errorMessage){
+      const timer = setTimeout(()=>setError(null), 4000);
+      return () => clearTimeout(timer)
+    }
+    }, [errorMessage, successMessage]);
 
   const totalPages = Math.ceil(total / limit);
 
@@ -131,8 +186,8 @@ export default function VagasPage() {
   return (
     <Container className="mt-4">
       {/*Renderização condicional de mensagens de erro e sucesso */}
-      {successMessage && <Alert variant="success">{successMessage}</Alert>}
-      {errorMessage && <Alert variant="danger">{errorMessage}</Alert>}
+      {successMessage && <Alert variant="success" dismissible onClose={()=>setSuccess(null)}>{successMessage}</Alert>}
+      {errorMessage && <Alert variant="danger" dismissible onClose={()=>setError(null)}>{errorMessage}</Alert>}
       <h2 className="mb-4">Vagas Disponíveis</h2>
 
       <ButtonGroup className="mb-3">
@@ -164,7 +219,23 @@ export default function VagasPage() {
                 <Card.Text><strong>Pontos:</strong> {vaga.rewardPoints}</Card.Text>
                 <Card.Text><strong>Data:</strong> {new Date(vaga.taskDate).toLocaleDateString('pt-BR')}</Card.Text>
                 {user && (
-                  <Button variant="success" className="mt-2" onClick={() => handleCandidatar(vaga.id)}> Candidatar-se </Button>
+                  jaCandidatado(vaga.id) ? (
+                    <Button variant="outline-success" disabled className="mt-2">
+                      {minhasCandidaturas.find(c => c.vagaID === vaga.id)?.status === 'Aprovado' ? (
+                        'Candidatura Aprovada'
+                      ) : (
+                        'Candidatura Pendente'
+                      )}
+                    </Button>
+                  ) : (
+                    <Button 
+                      variant="success" 
+                      className="mt-2" 
+                      onClick={() => handleCandidatar(vaga.id)}
+                    >
+                      Candidatar-se
+                    </Button>
+                  )
                 )}
                 {user?.isAdmin && (
                   <Button variant="danger" className="mt-2 ms-2" onClick={() => handleDelete(vaga.id)}>Deletar</Button>

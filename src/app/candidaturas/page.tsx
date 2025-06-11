@@ -24,7 +24,7 @@ export default function MinhasCandidaturasPage() {
 
   const [candidaturas, setCandidaturas] = useState<Candidatura[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user || !token) {
@@ -53,6 +53,13 @@ export default function MinhasCandidaturasPage() {
 
     fetchCandidaturas();
   }, [user, token, router]);
+
+  useEffect(() => {
+    if(error){
+      const timer = setTimeout(()=>setError(null), 4000);
+      return () => clearTimeout(timer)
+    }
+    }, [error]);
 
   const handleCancelar = async (id: string) => {
     try {
@@ -83,7 +90,7 @@ export default function MinhasCandidaturasPage() {
   return (
     <Container className="mt-4">
       <h3>Minhas Candidaturas</h3>
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && <Alert variant="danger" dismissible onClose={()=>setError(null)}>{error}</Alert>}
       {candidaturas.length === 0 && <p>Você ainda não se candidatou a nenhuma vaga.</p>}
 
       <Row>

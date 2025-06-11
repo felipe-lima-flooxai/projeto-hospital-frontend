@@ -90,8 +90,8 @@ export default function AdminUsersPage() {
     <Container className="mt-4">
       <h2>Administração de Usuários</h2>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      {error && <Alert variant="danger" dismissible onClose={()=> setError(null)}>{error}</Alert>}
+      {success && <Alert variant="success" dismissible onClose={()=> setSuccess(null)}>{success}</Alert>}
 
       {loading ? (
         <div className="d-flex justify-content-center mt-4">
