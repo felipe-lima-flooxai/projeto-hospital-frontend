@@ -1,6 +1,6 @@
 'use client'
 import { deleteCookie, getCookie, setCookie } from 'cookies-next';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, Dispatch, SetStateAction } from 'react';
 import { useRouter } from 'next/navigation';
 //vamos lá, preciso comentar pra eu mesmo me organizar
 //esses assuntos ainda não tão 100% na minha mente
@@ -31,6 +31,8 @@ interface User {
 interface AuthContextType {
   token: string | null;
   user: User | null;
+  setIsLoadingUser: Dispatch<SetStateAction<boolean>>;
+  isLoadingUser: boolean;
   setAuthData: (token: string, user: User) => void;
   clearAuthData: () => void;
 }
@@ -41,21 +43,26 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const token =  getCookie('token') as string
   const [user, setUser] = useState<User | null>(null);
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   const router = useRouter()
 
   const setAuthData = (token: string, user: User) => {
     setCookie("token", token)
     setUser(user);
+    setIsLoadingUser(false);
   };
 
   const clearAuthData = () => {
     router.push("/")
     deleteCookie("token")
     setUser(null);
+    setIsLoadingUser(false)
   };
 
   const getCurrentUser = async () => {
     try {
+
+      setIsLoadingUser(true)
       
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
         method: 'GET',
@@ -70,6 +77,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.log('Usuário não autenticado ou erro no /me');
       setUser(null);
+      setIsLoadingUser(false)
+    } finally{
+      setIsLoadingUser(false)
     }
   }
 
@@ -84,7 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
    [user, token])
 
   return (
-    <AuthContext.Provider value={{ token, user, setAuthData, clearAuthData }}>
+    <AuthContext.Provider value={{ token, user, setAuthData, clearAuthData, setIsLoadingUser, isLoadingUser }}>
       {children}
     </AuthContext.Provider>
   );

@@ -19,7 +19,7 @@ interface Candidatura {
 }
 
 export default function MinhasCandidaturasPage() {
-  const { user, token } = useAuth();
+  const { user, token, isLoadingUser } = useAuth();
   const router = useRouter();
 
   const [candidaturas, setCandidaturas] = useState<Candidatura[]>([]);
@@ -27,7 +27,7 @@ export default function MinhasCandidaturasPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!user || !token) {
+    if (!user && !isLoadingUser) {
       router.push('/auth/login');
       return;
     }
